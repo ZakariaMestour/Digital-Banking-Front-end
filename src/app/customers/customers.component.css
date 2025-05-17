@@ -1,0 +1,24 @@
+
+.card-header{
+  display: flex;
+  justify-content: space-between;
+}
+#search-bar-container{
+  display: flex;
+
+}
+.search-bar {
+  transition: width 0.3s ease-in-out;
+  width: 40px;
+}
+.search-bar {
+  width: 250px;
+}
+#class-title{
+
+    color: black;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-decoration: none;
+
+}
