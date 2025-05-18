@@ -6,7 +6,7 @@ import {CustomerService} from '../services/customer.service';
 import {map, Observable} from 'rxjs';
 import {Customer} from '../model/customer.model';
 import {FormsModule} from '@angular/forms';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 @Component({
   selector: 'app-customers',
   imports: [
@@ -22,7 +22,7 @@ import {RouterLink} from '@angular/router';
 export class CustomersComponent  implements OnInit {
   customers!: Observable<Array<Customer>>;
   searchText: string = '';
-  constructor(private customerService:CustomerService) {
+  constructor(private customerService:CustomerService,private router:Router) {
   }
 
   ngOnInit() {
@@ -48,5 +48,9 @@ export class CustomersComponent  implements OnInit {
       }
     });
 
+  }
+
+  handleCustomerAccounts(customer: Customer) {
+    this.router.navigateByUrl("/customer-accounts/"+customer.id, {state:customer})
   }
 }
