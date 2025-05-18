@@ -24,6 +24,7 @@ export class NewCustomerComponent implements OnInit{
     this.customerService.saveCustomer(customer).subscribe({
       next:data=>{
         alert("Customer has been successfully added!");
+        this.newCustomerFormGroup.reset();
       },
       error:err => {
         console.log(err);

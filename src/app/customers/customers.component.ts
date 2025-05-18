@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 
 import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
 import {CustomerService} from '../services/customer.service';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {Customer} from '../model/customer.model';
 import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
@@ -35,7 +35,13 @@ export class CustomersComponent  implements OnInit {
   handleDeleteCustomer(customer:Customer) {
     this.customerService.deleteCustomer(customer.id).subscribe({
       next:(resp) => {
-        this.searchCustomers();
+        this.customers=this.customers.pipe(
+          map(data =>{
+            let index=data.indexOf(customer);
+            data.splice(index,1);
+            return data;
+          })
+        );
       },
       error:err=>{
         console.log(err);
