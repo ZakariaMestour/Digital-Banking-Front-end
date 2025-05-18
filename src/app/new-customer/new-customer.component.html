@@ -1,1 +1,24 @@
-<p>new-customer works!</p>
+<div class="container row">
+  <div class="card col-7 offset-3">
+    <div class="card-header">New Customer</div>
+    <div class="card-body row">
+      <form [formGroup]="newCustomerFormGroup" (ngSubmit)="handleSaveCustomer()" class="col-9 offset-1" >
+        <div class="mb-3" style="display: flex; ">
+          <label class="form-label" style="margin-right: 20px">Name</label>
+          <input type="text" formControlName="name" class="form-control">
+        </div>
+        <div class="mb-3" style="display: flex; ">
+          <label class="form-label" style="margin-right: 20px">Email</label>
+          <input type="text" formControlName="email" class="form-control">
+        </div>
+        <div class="save-container col-4 offset-9">
+          <a>
+            <button [disabled]="!newCustomerFormGroup.valid" class="btn btn-success">Add Customer</button>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+

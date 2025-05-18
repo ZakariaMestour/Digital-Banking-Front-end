@@ -31,4 +31,16 @@ export class CustomersComponent  implements OnInit {
   searchCustomers(){
     this.customers = this.customerService.searchCustomers(this.searchText);
   }
+
+  handleDeleteCustomer(customer:Customer) {
+    this.customerService.deleteCustomer(customer.id).subscribe({
+      next:(resp) => {
+        this.searchCustomers();
+      },
+      error:err=>{
+        console.log(err);
+      }
+    });
+
+  }
 }

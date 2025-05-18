@@ -16,4 +16,10 @@ export class CustomerService {
     return this.http.get<Array<Customer>>("http://localhost:8081/api/customers/search?keyword="+keyword);
 
   }
+  public saveCustomer(customer:Customer):Observable<Customer>{
+    return this.http.post<Customer>("http://localhost:8081/api/customers",customer);
+  }
+  public deleteCustomer(id:String){
+    return this.http.delete("http://localhost:8081/api/customers/"+id);
+  }
 }
