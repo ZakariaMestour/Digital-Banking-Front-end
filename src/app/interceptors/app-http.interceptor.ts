@@ -6,6 +6,7 @@ import {catchError, throwError} from 'rxjs';
 export const appHttpInterceptor: HttpInterceptorFn = (req, next) => {
   if(!req.url.includes('auth/login')) {
     const authService = inject(AuthService);
+    console.log('Attaching token:', authService.accessToken);
     let newRequest = req.clone({
       headers: req.headers.set('Authorization', 'Bearer ' + authService.accessToken)
     });

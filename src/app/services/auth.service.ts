@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {jwtDecode} from 'jwt-decode';
 import {Router} from '@angular/router';
-import {envirenement} from '../envirenement/envirenement';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +13,9 @@ export class AuthService {
     username:any;
     accessToken!:any;
 
-    constructor(private http:HttpClient,private router:Router) { }
+    constructor(private http:HttpClient,private router:Router) {
+        this.loadJwtTokenFromLocalStorage();
+    }
 
     public login(username: string, password: string){
         let options = {
@@ -42,7 +43,7 @@ export class AuthService {
             this.isAuthenticated = true;
             const decodedJwt = jwtDecode(this.accessToken) as any;
             this.username = decodedJwt.sub;
-            this.roles = decodedJwt.scope;
+            this.roles = decodedJwt.scope.split(' ');
             window.localStorage.setItem('jwt-token', this.accessToken);
         } else {
             console.error('Invalid access token received:', this.accessToken);

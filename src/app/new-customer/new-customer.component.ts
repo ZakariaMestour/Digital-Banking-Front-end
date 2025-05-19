@@ -8,7 +8,7 @@ import {Customer} from '../model/customer.model';
   selector: 'app-new-customer',
   imports: [
     ReactiveFormsModule,
-    RouterLink
+
   ],
   templateUrl: './new-customer.component.html',
   styleUrl: './new-customer.component.css'

@@ -6,6 +6,7 @@ import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconButton,
     MatIconModule,
     MatFormField,
-    MatInput
+    MatInput,
+    NgIf
   ],
   styleUrl: './login.component.css'
 })
