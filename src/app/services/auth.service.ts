@@ -1,54 +1,60 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-export interface AuthRequest {
-  username: string;
-  password: string;
-}
-
-
-export interface AuthResponse {
-  token: string;
-}
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {Router} from '@angular/router';
+import {envirenement} from '../envirenement/envirenement';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<string | null>;
-  public currentUser: Observable<string | null>;
-  private apiUrl = 'http://localhost:8081/api/auth';
 
-  constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<string | null>(
-      localStorage.getItem('token')
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
-  }
+    isAuthenticated:boolean=false;
+    roles:any;
+    username:any;
+    accessToken!:any;
 
-  public get currentUserValue(): string | null {
-    return this.currentUserSubject.value;
-  }
+    constructor(private http:HttpClient,private router:Router) { }
 
-  login(username: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { username, password })
-      .pipe(map(response => {
-        // Stocker le token JWT dans le localStorage
-        localStorage.setItem('token', response.token);
-        this.currentUserSubject.next(response.token);
-        return response;
-      }));
-  }
+    public login(username: string, password: string){
+        let options = {
+            headers:new HttpHeaders({}).set("Content-type", "application/x-www-form-urlencoded")
+        };
+        let params=new HttpParams().set('username', username).set('password', password);
+        return this.http.post("http://localhost:8081/auth/login", params, options);
+    }
 
-  logout() {
-    // Supprimer le token du localStorage lors de la déconnexion
-    localStorage.removeItem('token');
-    this.currentUserSubject.next(null);
-  }
+    public logout(){
+        this.isAuthenticated=false;
+        this.roles=undefined;
+        this.username=undefined;
+        this.accessToken=undefined;
+        window.localStorage.removeItem('jwt-token');
+        this.router.navigateByUrl('/login').then();
+    }
 
-  isLoggedIn(): boolean {
-    return this.currentUserValue !== null;
-  }
+    loadProfile(data: any) {
+        this.accessToken = data['access-token'];
+
+        console.log('Access token received:', this.accessToken);
+
+        if (typeof this.accessToken === 'string' && this.accessToken.trim() !== '') {
+            this.isAuthenticated = true;
+            const decodedJwt = jwtDecode(this.accessToken) as any;
+            this.username = decodedJwt.sub;
+            this.roles = decodedJwt.scope;
+            window.localStorage.setItem('jwt-token', this.accessToken);
+        } else {
+            console.error('Invalid access token received:', this.accessToken);
+            this.isAuthenticated = false;
+        }
+    }
+    loadJwtTokenFromLocalStorage(){
+        let token=window.localStorage.getItem('jwt-token');
+        if(token){
+            this.loadProfile({ 'access-token': token });
+            console.log("Token loaded from local storage:", token);
+            //this.router.navigateByUrl('/admin/customers').then();
+        }
+    }
 }

@@ -1,58 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import {NgClass, NgIf} from '@angular/common';
+import {AuthService} from '../services/auth.service';
+import {Router} from '@angular/router';
+import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   imports: [
     ReactiveFormsModule,
-    NgClass,
-    NgIf
+    MatLabel,
+    MatLabel,
+    MatCardContent,
+    MatCardTitle,
+    MatCardHeader,
+    MatCard,
+    MatButton,
+    MatIconButton,
+    MatIconModule,
+    MatFormField,
+    MatInput
   ],
-  styleUrls: ['./login.component.css']
+  styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
-  loading = false;
-  error = '';
+  loginFormGroup!:FormGroup;
+  loginError!:string;
+  hidePassword: boolean = true;
+  constructor(private fb:FormBuilder,private authService:AuthService,private router:Router) {
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  }
 
   ngOnInit(): void {
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+    this.loginFormGroup = this.fb.group({
+      username: [null, [Validators.required, Validators.minLength(4)]],
+      password: [null, [Validators.required, Validators.minLength(4)]]
     });
-
-    if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/dashboard']);
-    }
   }
 
-  // 👇 rendre le getter public explicitement
-  public get f() {
-    return this.loginForm?.controls;
-  }
-
-  onSubmit() {
-    if (this.loginForm.invalid) return;
-
-    this.loading = true;
-    this.error = '';
-
-    this.authService.login(this.f['username'].value, this.f['password'].value).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.error = 'Nom d\'utilisateur ou mot de passe incorrect';
-        this.loading = false;
+  handleLogin() {
+    let username=this.loginFormGroup.value.username;
+    let password=this.loginFormGroup.value.password;
+    this.authService.login(username, password).subscribe({
+        next: (data) => {
+          this.authService.loadProfile(data);
+          this.router.navigateByUrl("/admin");
+        },
+        error: (err) => {
+          this.loginError = err.message;
+        }
       }
-    });
+    )
   }
 }
